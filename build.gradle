@@ -1,0 +1,37 @@
+apply plugin: 'cpp'
+
+model {
+  toolChains {
+    gcc(Gcc) {
+       path "/usr/local/gcc-4.8"
+    }
+  }
+}
+executables {
+    main {}
+}
+
+task makeSources << {
+   file("src/main/headers").mkdirs()
+   file("src/main/cpp").mkdirs()
+   (1..1000).each { i ->
+	println i
+       file("src/main/headers/foo${i}.h") << """
+int doFoo${i}();
+"""
+       file("src/main/cpp/foo${i}.cpp") << """
+#include <iostream>
+#include "foo${i}.h"
+
+int doFoo${i}() {
+    return ${i};
+}
+"""
+   }
+   file("src/main/cpp/main.cpp") << """
+#include <iostream>
+int main() {
+    std::cout << "Hello" << std::endl;
+}
+"""
+}
